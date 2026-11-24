@@ -4,6 +4,7 @@ import { subplots } from "mpl";
 export const MAX_POINTS = 10_000;
 export const MAX_GROUPS = 100;
 export const MAX_BINS = 1_000;
+export const MAX_LABEL_LENGTH = 80;
 export const XY_TYPES = ["line", "step", "scatter", "bar", "barh"] as const;
 
 type XY = { x: number[]; y: number[] };
@@ -13,7 +14,7 @@ type Chart =
   | (XY & { type: "errorbar"; error: number | number[] })
   | { type: "hist"; values: number[]; bins?: number }
   | { type: "boxplot"; values: number[][] }
-  | { type: "pie"; values: number[] }
+  | { type: "pie"; values: number[]; labels?: string[] }
   | { type: "heatmap"; values: number[][] };
 
 function checkVector(name: string, values: number[], max = MAX_POINTS) {
@@ -91,7 +92,14 @@ export function renderPlot(chart: Chart) {
       if (chart.values.some(value => value < 0)) throw new Error("Pie values must be non-negative.");
       const total = chart.values.reduce((sum, value) => sum + value, 0);
       if (!Number.isFinite(total) || total <= 0) throw new Error("Pie values must sum to a positive finite number.");
-      ax.pie(chart.values);
+      const { labels } = chart;
+      if (labels !== undefined) {
+        if (labels.length !== chart.values.length) throw new Error("Provide one label per pie slice.");
+        if (labels.some(label => typeof label !== "string" || !label.trim() || label.length > MAX_LABEL_LENGTH)) {
+          throw new Error(`Pie labels must be non-blank strings of at most ${MAX_LABEL_LENGTH} characters.`);
+        }
+      }
+      ax.pie(chart.values, { labels });
       break;
     }
     case "heatmap":

@@ -1,6 +1,6 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
-import { MAX_BINS, MAX_GROUPS, MAX_POINTS, renderPlot, XY_TYPES } from "./plot.ts";
+import { MAX_BINS, MAX_GROUPS, MAX_LABEL_LENGTH, MAX_POINTS, renderPlot, XY_TYPES } from "./plot.ts";
 
 const vector = Type.Array(Type.Number(), { minItems: 1, maxItems: MAX_POINTS });
 const xy = { x: vector, y: vector };
@@ -19,7 +19,11 @@ export default function (pi: ExtensionAPI) {
         Type.Object({ type: Type.Literal("errorbar"), ...xy, error: scalarOrVector }, closed),
         Type.Object({ type: Type.Literal("hist"), values: vector, bins: Type.Optional(Type.Integer({ minimum: 1, maximum: MAX_BINS })) }, closed),
         Type.Object({ type: Type.Literal("boxplot"), values: Type.Array(vector, { minItems: 1, maxItems: MAX_GROUPS }) }, closed),
-        Type.Object({ type: Type.Literal("pie"), values: Type.Array(Type.Number(), { minItems: 1, maxItems: MAX_GROUPS }) }, closed),
+        Type.Object({
+          type: Type.Literal("pie"),
+          values: Type.Array(Type.Number(), { minItems: 1, maxItems: MAX_GROUPS }),
+          labels: Type.Optional(Type.Array(Type.String({ minLength: 1, maxLength: MAX_LABEL_LENGTH }), { minItems: 1, maxItems: MAX_GROUPS, description: "Slice names in the same order as values; one per slice." })),
+        }, closed),
         Type.Object({ type: Type.Literal("heatmap"), values: Type.Array(vector, { minItems: 1, maxItems: MAX_POINTS }) }, closed),
       ]),
     }, closed),

@@ -55,6 +55,19 @@ for (const chart of charts) {
   });
 }
 
+test("draws visible text for pie slice labels", () => {
+  const pie = { type: "pie", values: [1, 2, 3] } as const;
+  const values = [...pie.values];
+  const plain = PNG.sync.read(renderPlot({ type: pie.type, values })).data;
+  const labeled = PNG.sync.read(renderPlot({ type: pie.type, values, labels: ["One", "Two", "Three"] })).data;
+  let textPixels = 0;
+  for (let i = 0; i < plain.length; i += 4) {
+    if (plain[i] === 255 && plain[i + 1] === 255 && plain[i + 2] === 255 &&
+        labeled[i] < 128 && labeled[i] === labeled[i + 1] && labeled[i] === labeled[i + 2]) textPixels++;
+  }
+  assert.ok(textPixels > 50, `expected visible pie labels, got ${textPixels} dark pixels`);
+});
+
 test("rejects invalid chart-specific inputs", () => {
   assert.throws(() => renderPlot({ type: "errorbar", ...xy, error: -1 }), /non-negative/);
   assert.throws(() => renderPlot({ type: "errorbar", ...xy, error: [1] }), /same length/);
@@ -62,6 +75,9 @@ test("rejects invalid chart-specific inputs", () => {
   assert.throws(() => renderPlot({ type: "hist", values: [1], bins: 1001 }), /bins must be/);
   assert.throws(() => renderPlot({ type: "pie", values: [0] }), /positive finite/);
   assert.throws(() => renderPlot({ type: "pie", values: [-1, 2] }), /non-negative/);
+  assert.throws(() => renderPlot({ type: "pie", values: [1, 2], labels: ["One"] }), /one label per/);
+  assert.throws(() => renderPlot({ type: "pie", values: [1], labels: [" "] }), /non-blank/);
+  assert.throws(() => renderPlot({ type: "pie", values: [1], labels: ["x".repeat(81)] }), /at most 80/);
   assert.throws(() => renderPlot({ type: "heatmap", values: [[1], [2, 3]] }), /same length/);
   assert.throws(() => renderPlot({ type: "boxplot", values: [[1], []] }), /non-empty/);
   assert.throws(() => renderPlot({ type: "heatmap", values: [Array<number>(MAX_POINTS).fill(1), [2]] }), /10000 numbers in total/);
