@@ -14,7 +14,7 @@ type Chart =
   | (XY & { type: "errorbar"; error: number | number[] })
   | { type: "hist"; values: number[]; bins?: number }
   | { type: "boxplot"; values: number[][] }
-  | { type: "pie"; values: number[]; labels?: string[] }
+  | { type: "pie"; values: number[]; labels?: string[]; legend?: boolean }
   | { type: "heatmap"; values: number[][] };
 
 function checkVector(name: string, values: number[], max = MAX_POINTS) {
@@ -99,7 +99,12 @@ export function renderPlot(chart: Chart) {
           throw new Error(`Pie labels must be non-blank strings of at most ${MAX_LABEL_LENGTH} characters.`);
         }
       }
-      ax.pie(chart.values, { labels });
+      if (chart.legend) {
+        ax.pie(chart.values, { labels: labels ?? chart.values.map(String), labeldistance: null });
+        ax.legend({ loc: "upper right" });
+      } else {
+        ax.pie(chart.values, { labels });
+      }
       break;
     }
     case "heatmap":

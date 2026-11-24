@@ -32,9 +32,9 @@ Pass a `chart` object with a `type` and the fields below. All data must be finit
 | `fill_between`, `fill_betweenx` | `x` and `y`, optional `baseline` (scalar or one value per point, default 0). The first fills vertically and the second horizontally. |
 | `hist` | `values` vector and optional integer `bins` (1–1,000, default 10) |
 | `boxplot` | `values` as a list of up to 100 groups; use `[[1, 2, 3]]` for one group |
-| `pie` | `values` vector of up to 100 non-negative slices with a positive finite sum. Optional `labels` names the slices on the chart, in order (one non-blank label of up to 80 characters per slice). |
+| `pie` | `values` vector of up to 100 non-negative slices with a positive finite sum. Optional `labels` names the slices in order (one non-blank label of up to 80 characters per slice). Set `legend: true` to show a boxed color key instead of text beside the slices. Without `labels`, the key shows the slice values. |
 | `heatmap` | `values` as a rectangular matrix; rendered with `imshow` and a colorbar |
 
-Try: “Use `plot` to make a pie chart with values `[1, 2, 3]` and slice labels `['One', 'Two', 'Three']`.”
+Try: “Use `plot` to make a pie chart with values `[1, 2, 3]`, labels `['One', 'Two', 'Three']`, and a color-key legend (`legend: true`).”
 
 The tool covers the pinned MPL chart types, not its full styling, annotation, or subplot API.

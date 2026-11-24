@@ -23,6 +23,7 @@ export default function (pi: ExtensionAPI) {
           type: Type.Literal("pie"),
           values: Type.Array(Type.Number(), { minItems: 1, maxItems: MAX_GROUPS }),
           labels: Type.Optional(Type.Array(Type.String({ minLength: 1, maxLength: MAX_LABEL_LENGTH }), { minItems: 1, maxItems: MAX_GROUPS, description: "Slice names in the same order as values; one per slice." })),
+          legend: Type.Optional(Type.Boolean({ description: "Show a boxed color key instead of text beside the slices. Uses the slice values if labels are omitted." })),
         }, closed),
         Type.Object({ type: Type.Literal("heatmap"), values: Type.Array(vector, { minItems: 1, maxItems: MAX_POINTS }) }, closed),
       ]),

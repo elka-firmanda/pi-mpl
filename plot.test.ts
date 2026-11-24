@@ -68,6 +68,24 @@ test("draws visible text for pie slice labels", () => {
   assert.ok(textPixels > 50, `expected visible pie labels, got ${textPixels} dark pixels`);
 });
 
+test("draws a separate pie legend with matching color swatches", () => {
+  const pie = { type: "pie" as const, values: [1, 2, 3] };
+  const { width, data: plain } = PNG.sync.read(renderPlot(pie));
+  for (const labels of [undefined, ["One", "Two", "Three"]]) {
+    const { data } = PNG.sync.read(renderPlot({ ...pie, labels, legend: true }));
+    const colors = new Set(["31,119,180", "255,127,14", "44,160,44"]);
+    for (let y = 60; y < 130; y++) {
+      for (let x = 400; x < 520; x++) {
+        const i = (y * width + x) * 4;
+        if (plain.subarray(i, i + 3).every(channel => channel === 255)) {
+          colors.delete(data.subarray(i, i + 3).join(","));
+        }
+      }
+    }
+    assert.deepEqual([...colors], [], "expected each slice color in the legend, outside the pie");
+  }
+});
+
 test("rejects invalid chart-specific inputs", () => {
   assert.throws(() => renderPlot({ type: "errorbar", ...xy, error: -1 }), /non-negative/);
   assert.throws(() => renderPlot({ type: "errorbar", ...xy, error: [1] }), /same length/);
