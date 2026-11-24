@@ -5,6 +5,9 @@
   "type": "module",
   "engines": { "node": ">=24" },
   "scripts": { "test": "node --test" },
+  "pi": {
+    "extensions": ["./index.ts"]
+  },
   "dependencies": {
     "mpl": "git+https://github.com/ivarvong/mpl.git#8befb5cddc461d9d3a29b4b8270efe2d559f9d00"
   },

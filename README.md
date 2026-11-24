@@ -2,15 +2,23 @@
 
 `plot` is a single chart tool for Pi 1.6.0 on Node.js 24+. It renders a 640 × 480 PNG inline on image-capable terminals. MPL is pinned to `8befb5cd`.
 
+## Install
+
+```sh
+pi install git:github.com/elka-firmanda/pi-mpl
+```
+
+Start a fresh Pi session (or run `/reload`) to use `plot`. If you previously copied this extension into `~/.pi/agent/extensions/plot-line/`, move that manual copy outside the extensions folder to avoid registering `plot` twice.
+
+If npm 11 reports `EALLOWSCRIPTS` while preparing the MPL Git dependency because of a user-level `allow-scripts` setting, retry with `NPM_CONFIG_USERCONFIG=/dev/null pi install git:github.com/elka-firmanda/pi-mpl`. This ignores your user npm config for that command only.
+
+## Develop locally
+
 ```sh
 npm ci
 npm test
 pi -e ./index.ts
 ```
-
-If npm 11 rejects your user-level `allow-scripts` setting while preparing the Git dependency, try `NPM_CONFIG_USERCONFIG=/dev/null npm ci`. This does not change your npm configuration.
-
-To install for automatic discovery, put `index.ts`, `plot.ts`, `package.json`, and `package-lock.json` in a new `~/.pi/agent/extensions/plot-line/` directory, run `npm ci --omit=dev` there, and start a fresh Pi session. If upgrading an existing copy, replace `index.ts` and `plot-line.ts` with `index.ts` and `plot.ts`. The old `plot_line` tool is no longer registered.
 
 ## Chart inputs
 
